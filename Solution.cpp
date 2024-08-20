@@ -1,86 +1,69 @@
 #include <bits/stdc++.h>
-typedef long long ll;
-bitset<10000000000000> can;
 using namespace std;
-int getMax(stack<pair<int,int>> &s1,stack<pair<int,int>> &s2){
-  if (s1.empty() || s2.empty()) return  s1.empty() ? s2.top().second : s1.top().second;
-    
-  else return  max(s1.top().second, s2.top().second);
-    
-}
-void addElement(stack<pair<int,int>> &st,int newElem){
-  int newMax=st.empty()?newElem:max(newElem,st.top().second);
-  st.push({newElem,newMax});
-}
-void removeElement(stack<pair<int,int>> &s1,stack<pair<int,int>> &s2){
-  if (s2.empty()) {
-    while (!s1.empty()) {
-        int element = s1.top().first;
-        s1.pop();
-        int maximum = s2.empty() ? element : max(element, s2.top().second);
-        s2.push({element, maximum});
+typedef long long ll;
+vector<ll> tree;
+void update(ll ans,int k){
+    while(k>0){
+        tree[k]+=ans;
+        k/=2;
     }
+ 
+ 
 }
-
-s2.pop();
+ll f(int node,int left,int right,int low,int high){
+    if(left>=low && right<=high)return tree[node];
+    if(right<low || left>high)return 0;
+    int next=(left+right)/2;
+    return f(2*node,left,next,low,high)+f(2*node+1,next+1,right,low,high);
+ 
 }
+void update1(int node ,int left,int right,int low,int high,ll val){
+  if(left>=low && right<=high){
+    tree[node]+=((high-low+1)*val);
+    return ;
+  }
+  if(right<low || left>high)return ;
+  int next=(left+right)/2;
+  update1(2*node,left,next,low,high,val);
+  update1(2*node+1,next+1,right,low,high,val);
 
+
+}
 int main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
     int n,q;
-    cin >> n >> q;
-    int a[n]={};
-    for(int i=0; i<n; i++){
-      cin>>a[i];
+    cin>>n>>q;
+    vector<ll> a(n);
+    for(int i=0;i<n;i++)cin>>a[i];
+    while(__builtin_popcount(n)!=1){
+        n++;
+        a.push_back(0);
     }
+    tree.resize(2*n);
+    for(int i=n;i<2*n;i++){
+        tree[i]=a[i-n];
+    }
+    for(int i=n-1;i>0;i--){
+        tree[i]=tree[2*i]+tree[2*i+1];
+    }
+
     while(q--){
-      int d;
-      cin >> d;
-      
-      stack<pair<int,int>> s1,s2;
-      for(int i=0;i<d;i++){
-        addElement(s1,a[i]);
-      }
-      int minimum=getMax(s1,s2);
-      for(int i=d;i<n;i++){
-        removeElement(s1,s2);
-        addElement(s1,a[i]);
-        if(getMax(s1,s2)<minimum)minimum=getMax(s1,s2);
+        int type;cin>>type;
+        if(type==1){
 
-      }
-      cout<<minimum<<"\n";
-
+            int low,high;
+            ll val;
+            cin>>low>>high>>val;
+            low--;high--;
+            update1(1,0,n-1,low,high,val);
+            
+ 
+        }
+        else{
+            int k;cin>>k;
+            k--;
+            cout<<tree[n+k-1]<<"\n";
+ 
+        }
+        
     }
-
-
-
-   
-    
-   
-
-   
-      
-
-      
-   }
-    
-    
-
-    
-
-    
-      
-      
-
-
-    
-    
-
-    
-
-
-
-    
-   
+}

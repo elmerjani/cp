@@ -1,22 +1,27 @@
+
+
 #include <bits/stdc++.h>
 using namespace std; 
-int lis(vector<int> &a){
-    int n=a.size();
-    int maxn=1;
-    vector<int> dp(n);
-    for(int i=0;i<n;i++){
-        dp[i]=1;
-        for(int j=0;j<n;j++){
-            if(a[i]>a[j])dp[i]=max(dp[i],dp[j]+1);
+typedef long long ll;
+const ll MOD=1e9+7;
+
+ll binpow(ll a, ll b ,ll mod){
+    ll ans= 1;
+    while(b>0){
+        if(b%2){
+            ans *=a;
+            ans%=mod;
         }
-        maxn=max(maxn,dp[i]);
+        a*=a;
+        a%=mod;
+        b/=2;
     }
-    
-    
-    return  maxn;
+    return ans;
 }
 int main(){
-    vector<int> a={7,7,7,7,7,7,7};
-    cout<<lis(a)<<"\n";
-
+    int t;cin >> t;
+    while(t--){
+        ll a, b;cin >> a >> b;
+        cout<<binpow(a,b,MOD)<<"\n";
+    }
 }
